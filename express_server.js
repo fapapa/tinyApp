@@ -13,7 +13,8 @@ const urlDatabase = {
 
 const randomLetter = () => {
   // Get a random number between 1 and 26
-  const n = Math.random * 25 + 1;
+  const n = Math.floor(Math.random() * 25) + 1;
+  console.log(n);
 
   // Turn it into a character A-Z
   return String.fromCharCode(n + 64);
