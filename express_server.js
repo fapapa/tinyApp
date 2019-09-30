@@ -11,6 +11,24 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const randomLetter = () => {
+  // Get a random number between 1 and 26
+  const n = Math.random * 25 + 1;
+
+  // Turn it into a character A-Z
+  return String.fromCharCode(n + 64);
+};
+
+const generateRandomString = () => {
+  let shortURL = "";
+
+  for (let i = 0; i < 5; i++) {
+    shortURL += randomLetter();
+  }
+
+  return shortURL;
+};
+
 app.get('/', (req, res) => {
   res.send('Hello!');
 });
