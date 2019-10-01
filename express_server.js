@@ -54,6 +54,19 @@ const emailLookup = (email) => {
   return undefined;
 };
 
+const urlsFor = (user) => {
+  let urls = {};
+  if (!user) return urls;
+
+  for (const url in urlDatabase) {
+    if (urlDatabase[url].userID === user.id) {
+      urls[url] = urlDatabase[url];
+    }
+  }
+
+  return urls;
+};
+
 app.get('/', (req, res) => {
   res.send('Hello!');
 });
@@ -114,10 +127,13 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
+  const user = users[req.cookies["user_id"]];
+  const userURLs = urlsFor(user);
   let templateVars = {
-    urls: urlDatabase,
-    user: users[req.cookies["user_id"]]
+    urls: userURLs,
+    user: user
   };
+
   res.render('urls_index', templateVars);
 });
 
