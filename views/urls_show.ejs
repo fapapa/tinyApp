@@ -17,6 +17,7 @@
       <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
       <p class="card-text">Created On: <%= createDate %></p>
       <p class="card-text">Hits: <%= hits %></p>
+      <p class="card-text">Unique Hits: <%= uniqueHits %></p>
       <form action="/urls/<%= shortURL %>" method="post" class="form-inline">
         <div class="form-group mb-2">
           <input type="text" name="longURL" value="<%= longURL %>" class="form-control">
