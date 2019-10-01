@@ -184,8 +184,16 @@ app.post('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect('/urls');
+  const user = users[req.cookies["user_id"]];
+  const userURLs = urlsFor(user);
+
+  if (userURLs[req.params.shortURL]) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect('/urls');
+  }
+
+  res.status(400);
+  res.send("Access denied");
 });
 
 app.get('/hello', (req, res) => {
