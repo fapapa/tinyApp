@@ -16,12 +16,14 @@ const urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
     userID: "userRandomID",
-    hits: 0
+    hits: 0,
+    createDate: new Date()
   },
   "9sm5xK": {
     longURL: "http://www.google.com",
     userID: "user2RandomID",
-    hits: 0
+    hits: 0,
+    createDate: new Date()
   }
 };
 
@@ -154,7 +156,11 @@ app.get('/urls', (req, res) => {
 
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+
+  urlDatabase[shortURL].longURL = req.body.longURL;
+  urlDatabase[shortURL].hits = 0;
+  urlDatabase[shortURL].createDate = new Date();
+
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -179,6 +185,7 @@ app.get('/urls/:shortURL', (req, res) => {
     templateVars.shortURL = req.params.shortURL;
     templateVars.longURL = userURLs[req.params.shortURL].longURL;
     templateVars.hits = userURLs[req.params.shortURL].hits;
+    templateVars.createDate = userURLs[req.params.shortURL].createDate;
   } else {
     templateVars.longURL = null;
   }

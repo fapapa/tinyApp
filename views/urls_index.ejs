@@ -19,6 +19,7 @@
         <tr>
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
+          <th scope="col">Created On</th>
           <th scope="col">Hits</th>
           <th scope="col">Actions</th>
         </tr>
@@ -28,6 +29,7 @@
           <tr>
             <td><%= url %></td>
             <td><%= urls[url].longURL %></td>
+            <td><%= urls[url].createDate %></td>
             <td><%= urls[url].hits %></td>
             <td>
               <form method="POST" action="/urls/<%= url %>/delete">
