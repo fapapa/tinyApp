@@ -17,12 +17,14 @@ const urlDatabase = {
     longURL: "http://www.lighthouselabs.ca",
     userID: "userRandomID",
     hits: 0,
+    uniqueHits: 0,
     createDate: new Date()
   },
   "9sm5xK": {
     longURL: "http://www.google.com",
     userID: "user2RandomID",
     hits: 0,
+    uniqueHits: 0,
     createDate: new Date()
   }
 };
