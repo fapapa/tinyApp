@@ -13,8 +13,16 @@ app.use(cookieSession({
 }));
 
 const urlDatabase = {
-  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
-  "9sm5xK": { longURL: "http://www.google.com", userID: "user2RandomID" }
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "userRandomID",
+    hits: 0
+  },
+  "9sm5xK": {
+    longURL: "http://www.google.com",
+    userID: "user2RandomID",
+    hits: 0
+  }
 };
 
 const users = {
@@ -126,7 +134,11 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/u/:shortURL', (req, res) => {
-  res.redirect(urlDatabase[req.params.shortURL].longURL);
+  const urlRecord = urlDatabase[req.params.shortURL];
+
+  urlRecord.hits++;
+
+  res.redirect(urlRecord.longURL);
 });
 
 app.get('/urls', (req, res) => {
@@ -166,6 +178,7 @@ app.get('/urls/:shortURL', (req, res) => {
   if (userURLs[req.params.shortURL]) {
     templateVars.shortURL = req.params.shortURL;
     templateVars.longURL = userURLs[req.params.shortURL].longURL;
+    templateVars.hits = userURLs[req.params.shortURL].hits;
   } else {
     templateVars.longURL = null;
   }
