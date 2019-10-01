@@ -63,8 +63,19 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect('/urls');
+  if (req.body.email && req.body.password) {
+    const user = emailLookup(req.body.email);
+    if (user.password === req.body.password) {
+      res.cookie('user_id', user.id);
+      res.redirect('/urls');
+    } else {
+      res.status(403);
+      res.send('Password incorrect');
+    }
+  } else {
+    res.status(403);
+    res.send('No user with that email address exists');
+  }
 });
 
 app.get('/logout', (req, res) => {
