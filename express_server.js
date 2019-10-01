@@ -9,8 +9,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
+  "9sm5xK": { longURL: "http://www.google.com", userID: "user2RandomID" }
 };
 
 const users = {
@@ -52,6 +52,19 @@ const emailLookup = (email) => {
   }
 
   return undefined;
+};
+
+const urlsFor = (user) => {
+  let urls = {};
+  if (!user) return urls;
+
+  for (const url in urlDatabase) {
+    if (urlDatabase[url].userID === user.id) {
+      urls[url] = urlDatabase[url];
+    }
+  }
+
+  return urls;
 };
 
 app.get('/', (req, res) => {
@@ -110,14 +123,17 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/u/:shortURL', (req, res) => {
-  res.redirect(urlDatabase[req.params.shortURL]);
+  res.redirect(urlDatabase[req.params.shortURL].longURL);
 });
 
 app.get('/urls', (req, res) => {
+  const user = users[req.cookies["user_id"]];
+  const userURLs = urlsFor(user);
   let templateVars = {
-    urls: urlDatabase,
-    user: users[req.cookies["user_id"]]
+    urls: userURLs,
+    user: user
   };
+
   res.render('urls_index', templateVars);
 });
 
@@ -141,23 +157,43 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  let templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
-    user: users[req.cookies["user_id"]]
-  };
+  const user = users[req.cookies["user_id"]];
+  const userURLs = urlsFor(user);
+  let templateVars = { user };
+  if (userURLs[req.params.shortURL]) {
+    templateVars.shortURL = req.params.shortURL;
+    templateVars.longURL = userURLs[req.params.shortURL].longURL;
+  } else {
+    templateVars.longURL = null;
+  }
 
   res.render('urls_show', templateVars);
 });
 
 app.post('/urls/:shortURL', (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.longURL;
-  res.redirect(`/urls/${req.params.shortURL}`);
+  const user = users[req.cookies["user_id"]];
+  const userURLs = urlsFor(user);
+
+  if (userURLs[req.params.shortURL]) {
+    urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+    res.redirect(`/urls/${req.params.shortURL}`);
+  }
+
+  res.status(400);
+  res.send("Access denied");
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect('/urls');
+  const user = users[req.cookies["user_id"]];
+  const userURLs = urlsFor(user);
+
+  if (userURLs[req.params.shortURL]) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect('/urls');
+  }
+
+  res.status(400);
+  res.send("Access denied");
 });
 
 app.get('/hello', (req, res) => {
