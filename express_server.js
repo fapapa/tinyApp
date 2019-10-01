@@ -13,6 +13,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+};
+
 const randomLetter = () => {
   // Get a random number between 1 and 26
   const n = Math.floor(Math.random() * 25) + 1;
@@ -47,6 +60,19 @@ app.get('/logout', (req, res) => {
 
 app.get('/register', (req, res) => {
   res.render('register', {username: undefined});
+});
+
+app.post('/register', (req, res) => {
+  const uID = generateRandomString();
+  users[uID] = {};
+  const user = users[uID];
+  user.id = uID;
+  user.email = req.body.email;
+  user.pasword = req.body.password;
+
+  res.cookie('user_id', uID);
+  console.log(users);
+  res.redirect('/urls');
 });
 
 app.get('/u/:shortURL', (req, res) => {
