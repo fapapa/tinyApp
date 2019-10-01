@@ -44,6 +44,16 @@ const generateRandomString = () => {
   return shortURL;
 };
 
+const emailLookup = (email) => {
+  for (const user in users) {
+    if (users[user].email === email) {
+      return users[user];
+    }
+  }
+
+  return undefined;
+};
+
 app.get('/', (req, res) => {
   res.send('Hello!');
 });
@@ -63,6 +73,15 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
+  if (req.body.email === "" || req.body.email === "") {
+    res.status(400);
+    res.send("Neither email nor password can be blank.");
+  }
+  if (emailLookup(req.body.email)) {
+    res.status(400);
+    res.send("Email already exists; please sign in instead");
+  }
+
   const uID = generateRandomString();
   users[uID] = {};
   const user = users[uID];
