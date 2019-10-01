@@ -10,9 +10,9 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if (username) {%>
+    <% if (user) {%>
     <div>
-      You are currently logged in as <%= username %>.
+      Logged in as <%= user.email %>.
       <a href="/logout" class="btn btn-primary">Log Out</a>
     </div>
     <% } else { %>
