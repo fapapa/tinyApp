@@ -157,11 +157,15 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  let templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
-    user: users[req.cookies["user_id"]]
-  };
+  const user = users[req.cookies["user_id"]];
+  const userURLs = urlsFor(user);
+  let templateVars = { user };
+  if (userURLs[req.params.shortURL]) {
+    templateVars.shortURL = req.params.shortURL;
+    templateVars.longURL = userURLs[req.params.shortURL].longURL;
+  } else {
+    templateVars.longURL = null;
+  }
 
   res.render('urls_show', templateVars);
 });
