@@ -156,7 +156,11 @@ app.get('/urls', (req, res) => {
 
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+
+  urlDatabase[shortURL].longURL = req.body.longURL;
+  urlDatabase[shortURL].hits = 0;
+  urlDatabase[shortURL].createDate = new Date();
+
   res.redirect(`/urls/${shortURL}`);
 });
 
