@@ -58,6 +58,10 @@ app.get('/', (req, res) => {
   res.send('Hello!');
 });
 
+app.get('/login', (req, res) => {
+  res.render('login', {user: undefined});
+});
+
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
   res.redirect('/urls');
