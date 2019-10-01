@@ -185,6 +185,7 @@ app.get('/urls/:shortURL', (req, res) => {
     templateVars.shortURL = req.params.shortURL;
     templateVars.longURL = userURLs[req.params.shortURL].longURL;
     templateVars.hits = userURLs[req.params.shortURL].hits;
+    templateVars.createDate = userURLs[req.params.shortURL].createDate;
   } else {
     templateVars.longURL = null;
   }
