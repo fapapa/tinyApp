@@ -134,7 +134,11 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/u/:shortURL', (req, res) => {
-  res.redirect(urlDatabase[req.params.shortURL].longURL);
+  const urlRecord = urlDatabase[req.params.shortURL];
+
+  urlRecord.hits++;
+
+  res.redirect(urlRecord);
 });
 
 app.get('/urls', (req, res) => {
