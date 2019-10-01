@@ -16,7 +16,6 @@ const urlDatabase = {
 const randomLetter = () => {
   // Get a random number between 1 and 26
   const n = Math.floor(Math.random() * 25) + 1;
-  console.log(n);
 
   // Turn it into a character A-Z
   return String.fromCharCode(n + 64);
@@ -38,6 +37,11 @@ app.get('/', (req, res) => {
 
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
+  res.redirect('/urls');
+});
+
+app.get('/logout', (req, res) => {
+  res.clearCookie('username');
   res.redirect('/urls');
 });
 
