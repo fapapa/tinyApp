@@ -138,7 +138,7 @@ app.get('/u/:shortURL', (req, res) => {
 
   urlRecord.hits++;
 
-  res.redirect(urlRecord);
+  res.redirect(urlRecord.longURL);
 });
 
 app.get('/urls', (req, res) => {
@@ -178,6 +178,7 @@ app.get('/urls/:shortURL', (req, res) => {
   if (userURLs[req.params.shortURL]) {
     templateVars.shortURL = req.params.shortURL;
     templateVars.longURL = userURLs[req.params.shortURL].longURL;
+    templateVars.hits = userURLs[req.params.shortURL].hits;
   } else {
     templateVars.longURL = null;
   }
