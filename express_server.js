@@ -33,7 +33,7 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    hashedPassword: bcrypt.hashSync("purple-monkey-dinosaur", 10)
+    hashedPassword: bcrypt.hashSync("sekret", 10)
   },
   "user2RandomID": {
     id: "user2RandomID",
@@ -140,7 +140,13 @@ app.post('/register', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   const urlRecord = urlDatabase[req.params.shortURL];
 
-  urlRecord.hits++;
+  if (!req.session.user_id && !req.session[req.params.shortURL]) {
+    req.session[req.params.shortURL] = true;
+    urlRecord.hits++;
+    urlRecord.uniqueHits++;
+  } else if (!req.session.user_id) {
+    urlRecord.hits++;
+  }
 
   res.redirect(urlRecord.longURL);
 });
@@ -161,6 +167,7 @@ app.post('/urls', (req, res) => {
 
   urlDatabase[shortURL].longURL = req.body.longURL;
   urlDatabase[shortURL].hits = 0;
+  urlDatabase[shortURL].uniqueHits = 0;
   urlDatabase[shortURL].createDate = new Date();
 
   res.redirect(`/urls/${shortURL}`);
@@ -187,6 +194,7 @@ app.get('/urls/:shortURL', (req, res) => {
     templateVars.shortURL = req.params.shortURL;
     templateVars.longURL = userURLs[req.params.shortURL].longURL;
     templateVars.hits = userURLs[req.params.shortURL].hits;
+    templateVars.uniqueHits = userURLs[req.params.shortURL].uniqueHits;
     templateVars.createDate = userURLs[req.params.shortURL].createDate;
   } else {
     templateVars.longURL = null;
