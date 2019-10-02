@@ -112,7 +112,11 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  res.render('register', {user: undefined});
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.render('register', {user: undefined});
+  }
 });
 
 app.post('/register', (req, res) => {
