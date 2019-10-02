@@ -83,7 +83,11 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('login', {user: undefined});
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.render('login', {user: undefined});
+  }
 });
 
 app.post('/login', (req, res) => {
