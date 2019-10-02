@@ -157,7 +157,7 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
-app.post('/urls/:shortURL', (req, res) => {
+app.put('/urls/:shortURL', (req, res) => {
   const user = users[req.session.user_id];
   const userURLs = urlsFor(user, urlDatabase);
 
@@ -170,7 +170,7 @@ app.post('/urls/:shortURL', (req, res) => {
   res.send("Access denied");
 });
 
-app.post('/urls/:shortURL/delete', (req, res) => {
+app.delete('/urls/:shortURL', (req, res) => {
   const user = users[req.session.user_id];
   const userURLs = urlsFor(user, urlDatabase);
 

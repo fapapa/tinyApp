@@ -18,7 +18,8 @@
       <p class="card-text">Created On: <%= createDate %></p>
       <p class="card-text">Hits: <%= hits %></p>
       <p class="card-text">Unique Hits: <%= uniqueHits %></p>
-      <form action="/urls/<%= shortURL %>" method="post" class="form-inline">
+      <form action="/urls/<%= shortURL %>" method="post" class="form-inline" enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="_method" value="PUT">
         <div class="form-group mb-2">
           <input type="text" name="longURL" value="<%= longURL %>" class="form-control">
           <input type="submit" value="Save" class="btn btn-primary">
