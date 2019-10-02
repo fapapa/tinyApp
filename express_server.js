@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const emailLookup = require('./helpers.js').emailLookup;
 const PORT = 8080;
 
 app.set('view engine', 'ejs');
@@ -58,16 +59,6 @@ const generateRandomString = () => {
   }
 
   return shortURL;
-};
-
-const emailLookup = (email, database) => {
-  for (const user in database) {
-    if (database[user].email === email) {
-      return database[user];
-    }
-  }
-
-  return undefined;
 };
 
 const urlsFor = (user) => {
