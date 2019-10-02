@@ -5,7 +5,7 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const methodOverride = require('method-override');
 const { emailLookup, generateRandomString, urlsFor } = require('./helpers.js');
-const { urlDatabase, users } = require('./database.js');
+const { urlDatabase, users, visits } = require('./database.js');
 const PORT = 8080;
 
 app.set('view engine', 'ejs');
@@ -92,11 +92,15 @@ app.post('/register', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   const urlRecord = urlDatabase[req.params.shortURL];
 
-  if (!req.session.user_id && !req.session[req.params.shortURL]) {
-    req.session[req.params.shortURL] = true;
+  if (!req.session.user_id && !req.session.visitor_id) {
+    const visitor = generateRandomString();
+    req.session.visitor_id = visitor;
+    visits[req.params.shortURL].push({date: new Date(), visitorID: visitor});
     urlRecord.hits++;
     urlRecord.uniqueHits++;
   } else if (!req.session.user_id) {
+    const visitor = req.session.visitor_id;
+    visits[req.params.shortURL].push({date: new Date(), visitorID: visitor});
     urlRecord.hits++;
   }
 
@@ -147,6 +151,7 @@ app.get('/urls/:shortURL', (req, res) => {
   if (userURLs[req.params.shortURL]) {
     templateVars.shortURL = req.params.shortURL;
     templateVars.longURL = userURLs[req.params.shortURL].longURL;
+    templateVars.visits = visits[req.params.shortURL];
     templateVars.hits = userURLs[req.params.shortURL].hits;
     templateVars.uniqueHits = userURLs[req.params.shortURL].uniqueHits;
     templateVars.createDate = userURLs[req.params.shortURL].createDate;

@@ -25,6 +25,22 @@
           <input type="submit" value="Save" class="btn btn-primary">
         </div>
       </form>
+
+      <h6>Visit Log</h6>
+      <table>
+        <tr>
+          <th>Date</th>
+          <th>Visitor ID</th>
+        </tr>
+        <% if (visits) { %>
+        <% visits.forEach((visit) => { %>
+        <tr>
+          <td><%= visit.date %></td>
+          <td><%= visit.visitorID %></td>
+        </tr>
+        <% }); %>
+        <% } %>
+      </table>
     </div>
     <div class="card-footer text-muted"></div>
   </div>
