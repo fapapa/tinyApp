@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const methodOverride = require('method-override');
 const { emailLookup, generateRandomString, urlsFor } = require('./helpers.js');
 const { urlDatabase, users } = require('./database.js');
 const PORT = 8080;
@@ -12,6 +13,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
   secret: 'thisissupersecret'
+}));
+app.use(methodOverride((req, res) => {
+  if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+    // look in urlencoded POST bodies and delete it
+    const method = req.body._method;
+    delete req.body._method;
+    return method;
+  }
 }));
 
 app.get('/', (req, res) => {
