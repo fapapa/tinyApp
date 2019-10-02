@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const { emailLookup, generateRandomString, urlsFor } = require('./helpers.js');
+const { urlDatabase, users } = require('./database.js');
 const PORT = 8080;
 
 app.set('view engine', 'ejs');
@@ -12,36 +13,6 @@ app.use(cookieSession({
   name: 'session',
   secret: 'thisissupersecret'
 }));
-
-const urlDatabase = {
-  "b2xVn2": {
-    longURL: "http://www.lighthouselabs.ca",
-    userID: "userRandomID",
-    hits: 0,
-    uniqueHits: 0,
-    createDate: new Date()
-  },
-  "9sm5xK": {
-    longURL: "http://www.google.com",
-    userID: "user2RandomID",
-    hits: 0,
-    uniqueHits: 0,
-    createDate: new Date()
-  }
-};
-
-const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    hashedPassword: bcrypt.hashSync("sekret", 10)
-  },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    hashedPassword: bcrypt.hashSync("dishwasher-funk", 10)
-  }
-};
 
 app.get('/', (req, res) => {
   if (req.session.user_id) {
