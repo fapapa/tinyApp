@@ -75,11 +75,19 @@ const urlsFor = (user) => {
 };
 
 app.get('/', (req, res) => {
-  res.send('Hello!');
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/login', (req, res) => {
-  res.render('login', {user: undefined});
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.render('login', {user: undefined});
+  }
 });
 
 app.post('/login', (req, res) => {
@@ -104,7 +112,11 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  res.render('register', {user: undefined});
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.render('register', {user: undefined});
+  }
 });
 
 app.post('/register', (req, res) => {
