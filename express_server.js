@@ -156,7 +156,9 @@ app.get('/urls', (req, res) => {
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
 
+  urlDatabase[shortURL] = {};
   urlDatabase[shortURL].longURL = req.body.longURL;
+  urlDatabase[shortURL].userID = req.session.user_id;
   urlDatabase[shortURL].hits = 0;
   urlDatabase[shortURL].uniqueHits = 0;
   urlDatabase[shortURL].createDate = new Date();
