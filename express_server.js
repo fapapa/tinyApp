@@ -75,7 +75,11 @@ const urlsFor = (user) => {
 };
 
 app.get('/', (req, res) => {
-  res.send('Hello!');
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/login', (req, res) => {
