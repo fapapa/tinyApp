@@ -60,10 +60,10 @@ const generateRandomString = () => {
   return shortURL;
 };
 
-const emailLookup = (email) => {
-  for (const user in users) {
-    if (users[user].email === email) {
-      return users[user];
+const emailLookup = (email, database) => {
+  for (const user in database) {
+    if (database[user].email === email) {
+      return database[user];
     }
   }
 
@@ -93,7 +93,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
   if (req.body.email && req.body.password) {
-    const user = emailLookup(req.body.email);
+    const user = emailLookup(req.body.email, users);
     if (bcrypt.compareSync(req.body.password, user.hashedPassword)) {
       req.session.user_id = user.id;
       res.redirect('/urls');
@@ -121,7 +121,7 @@ app.post('/register', (req, res) => {
     res.status(400);
     res.send("Neither email nor password can be blank.");
   }
-  if (emailLookup(req.body.email)) {
+  if (emailLookup(req.body.email, users)) {
     res.status(400);
     res.send("Email already exists; please sign in instead");
   }
