@@ -92,11 +92,15 @@ app.post('/register', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
   const urlRecord = urlDatabase[req.params.shortURL];
 
-  if (!req.session.user_id && !req.session[req.params.shortURL]) {
-    req.session[req.params.shortURL] = true;
+  if (!req.session.user_id && !req.session.visitor_id) {
+    const visitor = generateRandomString();
+    req.session.visitor_id = visitor;
+    visits[req.params.shortURL].push({date: new Date(), visitorID: visitor});
     urlRecord.hits++;
     urlRecord.uniqueHits++;
   } else if (!req.session.user_id) {
+    const visitor = req.session.visitor_id;
+    visits[req.params.shortURL].push({date: new Date(), visitorID: visitor});
     urlRecord.hits++;
   }
 
