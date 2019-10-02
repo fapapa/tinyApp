@@ -75,11 +75,19 @@ const urlsFor = (user) => {
 };
 
 app.get('/', (req, res) => {
-  res.send('Hello!');
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/login', (req, res) => {
-  res.render('login', {user: undefined});
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.render('login', {user: undefined});
+  }
 });
 
 app.post('/login', (req, res) => {
@@ -104,7 +112,11 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  res.render('register', {user: undefined});
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.render('register', {user: undefined});
+  }
 });
 
 app.post('/register', (req, res) => {
@@ -156,7 +168,9 @@ app.get('/urls', (req, res) => {
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
 
+  urlDatabase[shortURL] = {};
   urlDatabase[shortURL].longURL = req.body.longURL;
+  urlDatabase[shortURL].userID = req.session.user_id;
   urlDatabase[shortURL].hits = 0;
   urlDatabase[shortURL].uniqueHits = 0;
   urlDatabase[shortURL].createDate = new Date();
