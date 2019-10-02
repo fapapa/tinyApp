@@ -30,4 +30,12 @@ const users = {
   }
 };
 
-module.exports = { urlDatabase, users };
+const visits = {
+  "b2xVn2": [
+    { date: new Date(), visitorID: "ABCDEF" },
+    { date: new Date(), visitorID: "XYZABC" },
+    { date: new Date(), visitorID: "ABCDEF" }
+  ]
+};
+
+module.exports = { urlDatabase, users, visits };
