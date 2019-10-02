@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const emailLookup = require('./helpers.js').emailLookup;
 const PORT = 8080;
 
 app.set('view engine', 'ejs');
@@ -60,16 +61,6 @@ const generateRandomString = () => {
   return shortURL;
 };
 
-const emailLookup = (email) => {
-  for (const user in users) {
-    if (users[user].email === email) {
-      return users[user];
-    }
-  }
-
-  return undefined;
-};
-
 const urlsFor = (user) => {
   let urls = {};
   if (!user) return urls;
@@ -93,7 +84,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
   if (req.body.email && req.body.password) {
-    const user = emailLookup(req.body.email);
+    const user = emailLookup(req.body.email, users);
     if (bcrypt.compareSync(req.body.password, user.hashedPassword)) {
       req.session.user_id = user.id;
       res.redirect('/urls');
@@ -121,7 +112,7 @@ app.post('/register', (req, res) => {
     res.status(400);
     res.send("Neither email nor password can be blank.");
   }
-  if (emailLookup(req.body.email)) {
+  if (emailLookup(req.body.email, users)) {
     res.status(400);
     res.send("Email already exists; please sign in instead");
   }
