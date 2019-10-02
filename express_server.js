@@ -3,7 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const emailLookup = require('./helpers.js').emailLookup;
+const { emailLookup, generateRandomString, urlsFor } = require('./helpers.js');
+const { urlDatabase, users } = require('./database.js');
 const PORT = 8080;
 
 app.set('view engine', 'ejs');
@@ -12,67 +13,6 @@ app.use(cookieSession({
   name: 'session',
   secret: 'thisissupersecret'
 }));
-
-const urlDatabase = {
-  "b2xVn2": {
-    longURL: "http://www.lighthouselabs.ca",
-    userID: "userRandomID",
-    hits: 0,
-    uniqueHits: 0,
-    createDate: new Date()
-  },
-  "9sm5xK": {
-    longURL: "http://www.google.com",
-    userID: "user2RandomID",
-    hits: 0,
-    uniqueHits: 0,
-    createDate: new Date()
-  }
-};
-
-const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    hashedPassword: bcrypt.hashSync("sekret", 10)
-  },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    hashedPassword: bcrypt.hashSync("dishwasher-funk", 10)
-  }
-};
-
-const randomLetter = () => {
-  // Get a random number between 1 and 26
-  const n = Math.floor(Math.random() * 25) + 1;
-
-  // Turn it into a character A-Z
-  return String.fromCharCode(n + 64);
-};
-
-const generateRandomString = () => {
-  let shortURL = "";
-
-  for (let i = 0; i < 5; i++) {
-    shortURL += randomLetter();
-  }
-
-  return shortURL;
-};
-
-const urlsFor = (user) => {
-  let urls = {};
-  if (!user) return urls;
-
-  for (const url in urlDatabase) {
-    if (urlDatabase[url].userID === user.id) {
-      urls[url] = urlDatabase[url];
-    }
-  }
-
-  return urls;
-};
 
 app.get('/', (req, res) => {
   if (req.session.user_id) {
@@ -156,7 +96,7 @@ app.get('/u/:shortURL', (req, res) => {
 
 app.get('/urls', (req, res) => {
   const user = users[req.session.user_id];
-  const userURLs = urlsFor(user);
+  const userURLs = urlsFor(user, urlDatabase);
   let templateVars = {
     urls: userURLs,
     user: user
@@ -193,7 +133,7 @@ app.get('/urls/new', (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   const user = users[req.session.user_id];
-  const userURLs = urlsFor(user);
+  const userURLs = urlsFor(user, urlDatabase);
   let templateVars = { user };
   if (userURLs[req.params.shortURL]) {
     templateVars.shortURL = req.params.shortURL;
@@ -210,7 +150,7 @@ app.get('/urls/:shortURL', (req, res) => {
 
 app.post('/urls/:shortURL', (req, res) => {
   const user = users[req.session.user_id];
-  const userURLs = urlsFor(user);
+  const userURLs = urlsFor(user, urlDatabase);
 
   if (userURLs[req.params.shortURL]) {
     urlDatabase[req.params.shortURL].longURL = req.body.longURL;
@@ -223,7 +163,7 @@ app.post('/urls/:shortURL', (req, res) => {
 
 app.post('/urls/:shortURL/delete', (req, res) => {
   const user = users[req.session.user_id];
-  const userURLs = urlsFor(user);
+  const userURLs = urlsFor(user, urlDatabase);
 
   if (userURLs[req.params.shortURL]) {
     delete urlDatabase[req.params.shortURL];
@@ -232,10 +172,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
   res.status(400);
   res.send("Access denied");
-});
-
-app.get('/hello', (req, res) => {
-  res.send('<html><body>Hello <b>World</b></body></html>\n');
 });
 
 app.listen(PORT, () => {
